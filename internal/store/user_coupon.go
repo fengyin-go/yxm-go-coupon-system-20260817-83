@@ -42,7 +42,7 @@ func (s *MemoryStore) CountUserCouponsByCouponAndUser(couponID, userID string) (
 	defer s.mu.RUnlock()
 	n := 0
 	for _, u := range s.userCoupons {
-		if u.UserID == userID {
+		if u.CouponID == couponID && u.UserID == userID {
 			n++
 		}
 	}

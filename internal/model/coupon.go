@@ -50,7 +50,7 @@ func (c *Coupon) Validate() error {
 	if c.MinSpend < 0 {
 		return NewValidationError("min_spend", "门槛金额不能为负")
 	}
-	if *c.UserLimit < 0 {
+	if c.UserLimit != nil && *c.UserLimit < 0 {
 		return NewValidationError("user_limit", "每人限领数量不能为负")
 	}
 	if c.TotalCount <= 0 {
