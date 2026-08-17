@@ -31,6 +31,7 @@ type Store interface {
 	DeleteBatch(id string) error
 
 	// 用户券
+	IssueUserCoupon(userID, batchID string) (*model.UserCoupon, error)
 	CreateUserCoupon(u *model.UserCoupon) error
 	GetUserCoupon(id string) (*model.UserCoupon, error)
 	GetUserCouponByCode(code string) (*model.UserCoupon, error)

@@ -50,3 +50,18 @@ func (b *Batch) Remaining() int {
 	}
 	return b.TotalCount - b.IssuedCount
 }
+
+// Reserve 在真正发放一张用户券时推进批次计数，并返回是否还有剩余。
+func (b *Batch) Reserve() bool {
+	if b.IssuedCount >= b.TotalCount {
+		return false
+	}
+	b.IssuedCount++
+	if b.IssuedCount >= b.TotalCount {
+		b.Status = BatchFinished
+	} else if b.Status == BatchCreated {
+		b.Status = BatchIssuing
+	}
+	b.UpdatedAt = time.Now()
+	return true
+}

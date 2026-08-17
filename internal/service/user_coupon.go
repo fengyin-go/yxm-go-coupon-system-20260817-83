@@ -9,60 +9,9 @@ import (
 	"coupon/pkg/idgen"
 )
 
-// Issue 从指定批次向用户发放一张券，完成批次/券的发放计数更新。
+// Issue 从指定批次向用户发放一张券。检查与计数更新统一由 store 层原子完成。
 func (s *Service) Issue(userID, batchID string) (*model.UserCoupon, error) {
-	if userID == "" {
-		return nil, model.NewValidationError("user_id", "用户不能为空")
-	}
-	b, err := s.store.GetBatch(batchID)
-	if err != nil {
-		return nil, err
-	}
-	c, err := s.store.GetCoupon(b.CouponID)
-	if err != nil {
-		return nil, err
-	}
-	if c.Status != model.CouponActive {
-		return nil, model.NewValidationError("coupon", "券未启用")
-	}
-	if !c.InWindow(time.Now()) {
-		return nil, model.NewValidationError("coupon", "券不在有效期内")
-	}
-	if b.Remaining() <= 0 {
-		return nil, store.ErrConflict
-	}
-
-	now := time.Now()
-	uc := &model.UserCoupon{
-		ID:         idgen.Hex(),
-		UserID:     userID,
-		CouponID:   c.ID,
-		BatchID:    b.ID,
-		Code:       idgen.Short(),
-		Status:     model.UserCouponUnused,
-		ReceivedAt: now,
-		ExpiredAt:  c.EndAt,
-	}
-	if err := s.store.CreateUserCoupon(uc); err != nil {
-		return nil, err
-	}
-
-	b.IssuedCount++
-	if b.IssuedCount >= b.TotalCount {
-		b.Status = model.BatchFinished
-	} else if b.Status == model.BatchCreated {
-		b.Status = model.BatchIssuing
-	}
-	b.UpdatedAt = now
-	if err := s.store.UpdateBatch(b); err != nil {
-		return nil, err
-	}
-
-	c.IssuedCount++
-	if err := s.store.UpdateCoupon(c); err != nil {
-		return nil, err
-	}
-	return uc, nil
+	return s.store.IssueUserCoupon(userID, batchID)
 }
 
 // Use 核销一张用户券，完成状态机流转并生成使用记录。
