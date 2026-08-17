@@ -35,7 +35,7 @@ func (s *Service) Issue(userID, batchID string) (*model.UserCoupon, error) {
 	if err != nil {
 		return nil, err
 	}
-	if n >= *c.UserLimit {
+	if c.UserLimit != nil && n >= *c.UserLimit {
 		return nil, store.ErrConflict
 	}
 

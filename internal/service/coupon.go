@@ -77,7 +77,7 @@ func (s *Service) UpdateCoupon(id string, input model.Coupon) (*model.Coupon, er
 	if input.MinSpend >= 0 {
 		existing.MinSpend = input.MinSpend
 	}
-	if *input.UserLimit < 0 {
+	if input.UserLimit != nil && *input.UserLimit < 0 {
 		return nil, model.NewValidationError("user_limit", "每人限领数量不能为负")
 	}
 	existing.UserLimit = input.UserLimit
