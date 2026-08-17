@@ -16,7 +16,7 @@ func (s *MemoryStore) GetUsage(id string) (*model.Usage, error) {
 	defer s.mu.RUnlock()
 	u, ok := s.usages[id]
 	if !ok {
-		return nil, ErrNotFound
+		return nil, &StoreError{Kind: KindNotFound, Op: "get usage", Err: ErrNotFound}
 	}
 	return u, nil
 }

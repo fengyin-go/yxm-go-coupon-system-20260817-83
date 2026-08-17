@@ -70,8 +70,8 @@ func (c *Coupon) InWindow(now time.Time) bool {
 }
 
 type CouponFilter struct {
-	Type   string
-	Status string
+	Type    string
+	Status  string
 	Keyword string
 }
 

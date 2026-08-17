@@ -9,7 +9,7 @@ func (s *MemoryStore) CreateBatch(b *model.Batch) error {
 	defer s.mu.Unlock()
 	for _, exist := range s.batches {
 		if exist.Name == b.Name {
-			return ErrConflict
+			return &StoreError{Kind: KindConflict, Op: "create batch", Err: ErrConflict}
 		}
 	}
 	s.batches[b.ID] = b
@@ -21,7 +21,7 @@ func (s *MemoryStore) GetBatch(id string) (*model.Batch, error) {
 	defer s.mu.RUnlock()
 	b, ok := s.batches[id]
 	if !ok {
-		return nil, ErrNotFound
+		return nil, &StoreError{Kind: KindNotFound, Op: "get batch", Err: ErrNotFound}
 	}
 	return b, nil
 }
@@ -52,11 +52,11 @@ func (s *MemoryStore) UpdateBatch(b *model.Batch) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	if _, ok := s.batches[b.ID]; !ok {
-		return ErrNotFound
+		return &StoreError{Kind: KindNotFound, Op: "update batch", Err: ErrNotFound}
 	}
 	for _, exist := range s.batches {
 		if exist.ID != b.ID && exist.Name == b.Name {
-			return ErrConflict
+			return &StoreError{Kind: KindConflict, Op: "update batch", Err: ErrConflict}
 		}
 	}
 	s.batches[b.ID] = b
@@ -67,7 +67,7 @@ func (s *MemoryStore) DeleteBatch(id string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	if _, ok := s.batches[id]; !ok {
-		return ErrNotFound
+		return &StoreError{Kind: KindNotFound, Op: "delete batch", Err: ErrNotFound}
 	}
 	delete(s.batches, id)
 	return nil

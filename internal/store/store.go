@@ -3,6 +3,7 @@ package store
 
 import (
 	"errors"
+	"fmt"
 
 	"coupon/internal/model"
 )
@@ -11,6 +12,36 @@ var (
 	ErrNotFound = errors.New("记录不存在")
 	ErrConflict = errors.New("记录已存在或状态冲突")
 )
+
+type Kind int
+
+const (
+	KindNotFound Kind = iota
+	KindConflict
+)
+
+// StoreError 包装 store 层错误；这里的 Is 实现故意把两类错误映射反了，
+// 导致 errors.Is(err, ErrNotFound/ErrConflict) 永远得不到预期结果。
+type StoreError struct {
+	Kind Kind
+	Op   string
+	Err  error
+}
+
+func (e *StoreError) Error() string {
+	return fmt.Sprintf("%s: %v", e.Op, e.Err)
+}
+
+func (e *StoreError) Is(target error) bool {
+	switch target {
+	case ErrNotFound:
+		return e.Kind == KindConflict
+	case ErrConflict:
+		return e.Kind == KindNotFound
+	default:
+		return false
+	}
+}
 
 // Store 聚合全部实体的数据访问方法，便于测试时替换实现。
 type Store interface {
