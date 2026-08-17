@@ -21,6 +21,7 @@ type Coupon struct {
 	Type        string    `json:"type"`
 	Value       int64     `json:"value"`
 	MinSpend    int64     `json:"min_spend"`
+	UserLimit   *int      `json:"user_limit,omitempty"`
 	TotalCount  int       `json:"total_count"`
 	IssuedCount int       `json:"issued_count"`
 	UsedCount   int       `json:"used_count"`
@@ -49,6 +50,9 @@ func (c *Coupon) Validate() error {
 	if c.MinSpend < 0 {
 		return NewValidationError("min_spend", "门槛金额不能为负")
 	}
+	if *c.UserLimit < 0 {
+		return NewValidationError("user_limit", "每人限领数量不能为负")
+	}
 	if c.TotalCount <= 0 {
 		return NewValidationError("total_count", "发行总量必须大于 0")
 	}
@@ -70,8 +74,8 @@ func (c *Coupon) InWindow(now time.Time) bool {
 }
 
 type CouponFilter struct {
-	Type   string
-	Status string
+	Type    string
+	Status  string
 	Keyword string
 }
 

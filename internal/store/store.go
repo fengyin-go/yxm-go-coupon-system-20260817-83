@@ -34,6 +34,7 @@ type Store interface {
 	CreateUserCoupon(u *model.UserCoupon) error
 	GetUserCoupon(id string) (*model.UserCoupon, error)
 	GetUserCouponByCode(code string) (*model.UserCoupon, error)
+	CountUserCouponsByCouponAndUser(couponID, userID string) (int, error)
 	ListUserCoupons() []*model.UserCoupon
 	UpdateUserCoupon(u *model.UserCoupon) error
 	DeleteUserCoupon(id string) error

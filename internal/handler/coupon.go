@@ -21,6 +21,7 @@ type createCouponRequest struct {
 	Type       string `json:"type"`
 	Value      int64  `json:"value"`
 	MinSpend   int64  `json:"min_spend"`
+	UserLimit  *int   `json:"user_limit"`
 	TotalCount int    `json:"total_count"`
 	Status     string `json:"status"`
 	StartAt    string `json:"start_at"`
@@ -48,6 +49,7 @@ func (s *Server) createCoupon(w http.ResponseWriter, r *http.Request) {
 		Type:       req.Type,
 		Value:      req.Value,
 		MinSpend:   req.MinSpend,
+		UserLimit:  req.UserLimit,
 		TotalCount: req.TotalCount,
 		Status:     req.Status,
 		StartAt:    startAt,
@@ -94,11 +96,12 @@ func (s *Server) updateCoupon(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	input := model.Coupon{
-		Name:     req.Name,
-		Type:     req.Type,
-		Value:    req.Value,
-		MinSpend: req.MinSpend,
-		Status:   req.Status,
+		Name:      req.Name,
+		Type:      req.Type,
+		Value:     req.Value,
+		MinSpend:  req.MinSpend,
+		UserLimit: req.UserLimit,
+		Status:    req.Status,
 	}
 	if req.StartAt != "" {
 		t, err := parseTime(req.StartAt)

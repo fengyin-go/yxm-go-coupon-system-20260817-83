@@ -14,17 +14,18 @@ func (s *Service) CreateCoupon(input model.Coupon) (*model.Coupon, error) {
 	}
 	now := time.Now()
 	c := &model.Coupon{
-		ID:        idgen.Hex(),
-		Name:      input.Name,
-		Type:      input.Type,
-		Value:     input.Value,
-		MinSpend:  input.MinSpend,
+		ID:         idgen.Hex(),
+		Name:       input.Name,
+		Type:       input.Type,
+		Value:      input.Value,
+		MinSpend:   input.MinSpend,
+		UserLimit:  input.UserLimit,
 		TotalCount: input.TotalCount,
-		Status:    input.Status,
-		StartAt:   input.StartAt,
-		EndAt:     input.EndAt,
-		CreatedAt: now,
-		UpdatedAt: now,
+		Status:     input.Status,
+		StartAt:    input.StartAt,
+		EndAt:      input.EndAt,
+		CreatedAt:  now,
+		UpdatedAt:  now,
 	}
 	if err := s.store.CreateCoupon(c); err != nil {
 		return nil, err
@@ -76,6 +77,10 @@ func (s *Service) UpdateCoupon(id string, input model.Coupon) (*model.Coupon, er
 	if input.MinSpend >= 0 {
 		existing.MinSpend = input.MinSpend
 	}
+	if *input.UserLimit < 0 {
+		return nil, model.NewValidationError("user_limit", "每人限领数量不能为负")
+	}
+	existing.UserLimit = input.UserLimit
 	if input.Status != "" {
 		existing.Status = input.Status
 	}

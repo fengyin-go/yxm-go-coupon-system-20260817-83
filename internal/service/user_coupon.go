@@ -31,6 +31,13 @@ func (s *Service) Issue(userID, batchID string) (*model.UserCoupon, error) {
 	if b.Remaining() <= 0 {
 		return nil, store.ErrConflict
 	}
+	n, err := s.store.CountUserCouponsByCouponAndUser(c.ID, userID)
+	if err != nil {
+		return nil, err
+	}
+	if n >= *c.UserLimit {
+		return nil, store.ErrConflict
+	}
 
 	now := time.Now()
 	uc := &model.UserCoupon{

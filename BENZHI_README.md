@@ -1,4 +1,4 @@
-# yxm-go-coupon-system-20260817-83
+# coupon-system__001
 
 ## 标准命令
 
