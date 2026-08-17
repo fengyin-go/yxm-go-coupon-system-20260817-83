@@ -27,6 +27,7 @@ type Store interface {
 	GetBatch(id string) (*model.Batch, error)
 	ListBatches() []*model.Batch
 	ListBatchesByCoupon(couponID string) []*model.Batch
+	CountBatchesByCoupon(couponID string) (int, error)
 	UpdateBatch(b *model.Batch) error
 	DeleteBatch(id string) error
 
@@ -34,6 +35,7 @@ type Store interface {
 	CreateUserCoupon(u *model.UserCoupon) error
 	GetUserCoupon(id string) (*model.UserCoupon, error)
 	GetUserCouponByCode(code string) (*model.UserCoupon, error)
+	CountUserCouponsByCoupon(couponID string) (int, error)
 	ListUserCoupons() []*model.UserCoupon
 	UpdateUserCoupon(u *model.UserCoupon) error
 	DeleteUserCoupon(id string) error

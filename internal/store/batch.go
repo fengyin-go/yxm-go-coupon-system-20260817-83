@@ -48,6 +48,18 @@ func (s *MemoryStore) ListBatchesByCoupon(couponID string) []*model.Batch {
 	return list
 }
 
+func (s *MemoryStore) CountBatchesByCoupon(couponID string) (int, error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	n := 0
+	for _, b := range s.batches {
+		if b.CouponID == couponID {
+			n++
+		}
+	}
+	return n, nil
+}
+
 func (s *MemoryStore) UpdateBatch(b *model.Batch) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()

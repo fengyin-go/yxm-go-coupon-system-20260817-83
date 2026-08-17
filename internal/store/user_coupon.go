@@ -37,6 +37,18 @@ func (s *MemoryStore) GetUserCouponByCode(code string) (*model.UserCoupon, error
 	return nil, ErrNotFound
 }
 
+func (s *MemoryStore) CountUserCouponsByCoupon(couponID string) (int, error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	n := 0
+	for _, u := range s.userCoupons {
+		if u.CouponID == couponID {
+			n++
+		}
+	}
+	return n, nil
+}
+
 func (s *MemoryStore) ListUserCoupons() []*model.UserCoupon {
 	s.mu.RLock()
 	defer s.mu.RUnlock()

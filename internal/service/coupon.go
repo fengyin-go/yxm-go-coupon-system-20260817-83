@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"coupon/internal/model"
+	"coupon/internal/store"
 	"coupon/pkg/idgen"
 )
 
@@ -96,5 +97,19 @@ func (s *Service) UpdateCoupon(id string, input model.Coupon) (*model.Coupon, er
 }
 
 func (s *Service) DeleteCoupon(id string) error {
+	n, err := s.store.CountBatchesByCoupon(id)
+	if err != nil {
+		return err
+	}
+	if n > 0 {
+		return store.ErrConflict
+	}
+	n, err = s.store.CountUserCouponsByCoupon(id)
+	if err != nil {
+		return err
+	}
+	if n > 0 {
+		return store.ErrConflict
+	}
 	return s.store.DeleteCoupon(id)
 }
