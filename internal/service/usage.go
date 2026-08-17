@@ -22,7 +22,7 @@ func (s *Service) ListUsages(filter model.UsageFilter, page, size int) ([]*model
 		return matched[i].CreatedAt.After(matched[j].CreatedAt)
 	})
 	total := len(matched)
-	start := page * size
+	start := (page - 1) * size
 	if start > total {
 		return []*model.Usage{}, total, nil
 	}
