@@ -67,25 +67,29 @@ func NewLevel(level Level) *Logger {
 func (l *Logger) SetLevel(level Level) { l.mu.Lock(); defer l.mu.Unlock(); l.level = level }
 
 func (l *Logger) Debugf(format string, args ...interface{}) {
-	l.mu.Lock(); defer l.mu.Unlock()
+	l.mu.Lock()
+	defer l.mu.Unlock()
 	if l.level <= LevelDebug {
 		l.debug.Printf(format, args...)
 	}
 }
 func (l *Logger) Infof(format string, args ...interface{}) {
-	l.mu.Lock(); defer l.mu.Unlock()
+	l.mu.Lock()
+	defer l.mu.Unlock()
 	if l.level <= LevelInfo {
 		l.info.Printf(format, args...)
 	}
 }
 func (l *Logger) Warnf(format string, args ...interface{}) {
-	l.mu.Lock(); defer l.mu.Unlock()
+	l.mu.Lock()
+	defer l.mu.Unlock()
 	if l.level <= LevelWarn {
 		l.warn.Printf(format, args...)
 	}
 }
 func (l *Logger) Errorf(format string, args ...interface{}) {
-	l.mu.Lock(); defer l.mu.Unlock()
+	l.mu.Lock()
+	defer l.mu.Unlock()
 	if l.level <= LevelError {
 		l.err.Printf(format, args...)
 	}

@@ -38,12 +38,16 @@ func Error(w http.ResponseWriter, status, code int, message string) {
 	JSON(w, status, code, message, nil)
 }
 
-func BadRequest(w http.ResponseWriter, message string)     { Error(w, http.StatusBadRequest, 400, message) }
-func Unauthorized(w http.ResponseWriter, message string)   { Error(w, http.StatusUnauthorized, 401, message) }
-func Forbidden(w http.ResponseWriter, message string)      { Error(w, http.StatusForbidden, 403, message) }
-func NotFound(w http.ResponseWriter, message string)       { Error(w, http.StatusNotFound, 404, message) }
-func Conflict(w http.ResponseWriter, message string)       { Error(w, http.StatusConflict, 409, message) }
-func InternalError(w http.ResponseWriter, message string)  { Error(w, http.StatusInternalServerError, 500, message) }
+func BadRequest(w http.ResponseWriter, message string) { Error(w, http.StatusBadRequest, 400, message) }
+func Unauthorized(w http.ResponseWriter, message string) {
+	Error(w, http.StatusUnauthorized, 401, message)
+}
+func Forbidden(w http.ResponseWriter, message string) { Error(w, http.StatusForbidden, 403, message) }
+func NotFound(w http.ResponseWriter, message string)  { Error(w, http.StatusNotFound, 404, message) }
+func Conflict(w http.ResponseWriter, message string)  { Error(w, http.StatusConflict, 409, message) }
+func InternalError(w http.ResponseWriter, message string) {
+	Error(w, http.StatusInternalServerError, 500, message)
+}
 
 // Decode 解析 JSON 请求体，限制 1MB，且只允许单个 JSON 对象。
 func Decode(r *http.Request, dst interface{}) error {
