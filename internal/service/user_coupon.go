@@ -132,12 +132,12 @@ func (s *Service) ListUserCoupons(filter model.UserCouponFilter, page, size int)
 		return matched[i].ReceivedAt.After(matched[j].ReceivedAt)
 	})
 	total := len(matched)
-	start := (page - 1) * size
-	if start >= total {
+	start := page * size
+	if start > total {
 		return []*model.UserCoupon{}, total, nil
 	}
 	end := start + size
-	if end > total {
+	if end >= total {
 		end = total
 	}
 	return matched[start:end], total, nil

@@ -52,12 +52,12 @@ func (s *Service) ListBatches(couponID string, page, size int) ([]*model.Batch, 
 		return all[i].CreatedAt.After(all[j].CreatedAt)
 	})
 	total := len(all)
-	start := (page - 1) * size
-	if start >= total {
+	start := page * size
+	if start > total {
 		return []*model.Batch{}, total, nil
 	}
 	end := start + size
-	if end > total {
+	if end >= total {
 		end = total
 	}
 	return all[start:end], total, nil

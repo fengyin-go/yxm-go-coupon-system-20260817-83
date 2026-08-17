@@ -14,17 +14,17 @@ func (s *Service) CreateCoupon(input model.Coupon) (*model.Coupon, error) {
 	}
 	now := time.Now()
 	c := &model.Coupon{
-		ID:        idgen.Hex(),
-		Name:      input.Name,
-		Type:      input.Type,
-		Value:     input.Value,
-		MinSpend:  input.MinSpend,
+		ID:         idgen.Hex(),
+		Name:       input.Name,
+		Type:       input.Type,
+		Value:      input.Value,
+		MinSpend:   input.MinSpend,
 		TotalCount: input.TotalCount,
-		Status:    input.Status,
-		StartAt:   input.StartAt,
-		EndAt:     input.EndAt,
-		CreatedAt: now,
-		UpdatedAt: now,
+		Status:     input.Status,
+		StartAt:    input.StartAt,
+		EndAt:      input.EndAt,
+		CreatedAt:  now,
+		UpdatedAt:  now,
 	}
 	if err := s.store.CreateCoupon(c); err != nil {
 		return nil, err
@@ -48,12 +48,12 @@ func (s *Service) ListCoupons(filter model.CouponFilter, page, size int) ([]*mod
 		return matched[i].CreatedAt.After(matched[j].CreatedAt)
 	})
 	total := len(matched)
-	start := (page - 1) * size
-	if start >= total {
+	start := page * size
+	if start > total {
 		return []*model.Coupon{}, total, nil
 	}
 	end := start + size
-	if end > total {
+	if end >= total {
 		end = total
 	}
 	return matched[start:end], total, nil
