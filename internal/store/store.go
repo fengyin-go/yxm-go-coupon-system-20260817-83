@@ -20,8 +20,8 @@ const (
 	KindConflict
 )
 
-// StoreError 包装 store 层错误；这里的 Is 实现故意把两类错误映射反了，
-// 导致 errors.Is(err, ErrNotFound/ErrConflict) 永远得不到预期结果。
+// StoreError 包装 store 层错误，携带操作名与错误类别；
+// Is 方法使 errors.Is(err, ErrNotFound/ErrConflict) 能正确匹配包装后的错误。
 type StoreError struct {
 	Kind Kind
 	Op   string
@@ -35,9 +35,9 @@ func (e *StoreError) Error() string {
 func (e *StoreError) Is(target error) bool {
 	switch target {
 	case ErrNotFound:
-		return e.Kind == KindConflict
-	case ErrConflict:
 		return e.Kind == KindNotFound
+	case ErrConflict:
+		return e.Kind == KindConflict
 	default:
 		return false
 	}

@@ -1,6 +1,7 @@
 package store
 
 import (
+	"errors"
 	"testing"
 	"time"
 
@@ -32,7 +33,7 @@ func TestCouponCRUD(t *testing.T) {
 		t.Fatalf("create: %v", err)
 	}
 	// 同名冲突
-	if err := s.CreateCoupon(testCoupon("满50减5")); err != ErrConflict {
+	if err := s.CreateCoupon(testCoupon("满50减5")); !errors.Is(err, ErrConflict) {
 		t.Fatalf("expect conflict, got %v", err)
 	}
 
@@ -44,7 +45,7 @@ func TestCouponCRUD(t *testing.T) {
 		t.Fatalf("value = %d, want 500", got.Value)
 	}
 
-	if _, err := s.GetCoupon("missing"); err != ErrNotFound {
+	if _, err := s.GetCoupon("missing"); !errors.Is(err, ErrNotFound) {
 		t.Fatalf("expect not found, got %v", err)
 	}
 
@@ -65,7 +66,7 @@ func TestCouponCRUD(t *testing.T) {
 	if err := s.DeleteCoupon("c-满50减5"); err != nil {
 		t.Fatalf("delete: %v", err)
 	}
-	if err := s.DeleteCoupon("c-满50减5"); err != ErrNotFound {
+	if err := s.DeleteCoupon("c-满50减5"); !errors.Is(err, ErrNotFound) {
 		t.Fatalf("expect not found on re-delete, got %v", err)
 	}
 }
@@ -76,7 +77,7 @@ func TestBatchCRUD(t *testing.T) {
 	if err := s.CreateBatch(b); err != nil {
 		t.Fatalf("create: %v", err)
 	}
-	if err := s.CreateBatch(&model.Batch{ID: "b2", Name: "批次A", CouponID: "c1", TotalCount: 5}); err != ErrConflict {
+	if err := s.CreateBatch(&model.Batch{ID: "b2", Name: "批次A", CouponID: "c1", TotalCount: 5}); !errors.Is(err, ErrConflict) {
 		t.Fatalf("expect conflict, got %v", err)
 	}
 	got, err := s.GetBatch("b1")
@@ -96,7 +97,7 @@ func TestBatchCRUD(t *testing.T) {
 	if err := s.DeleteBatch("b1"); err != nil {
 		t.Fatalf("delete: %v", err)
 	}
-	if _, err := s.GetBatch("b1"); err != ErrNotFound {
+	if _, err := s.GetBatch("b1"); !errors.Is(err, ErrNotFound) {
 		t.Fatalf("expect not found, got %v", err)
 	}
 }
@@ -107,7 +108,7 @@ func TestUserCouponCRUD(t *testing.T) {
 	if err := s.CreateUserCoupon(uc); err != nil {
 		t.Fatalf("create: %v", err)
 	}
-	if err := s.CreateUserCoupon(&model.UserCoupon{ID: "uc2", UserID: "u2", CouponID: "c1", Code: "ABC123"}); err != ErrConflict {
+	if err := s.CreateUserCoupon(&model.UserCoupon{ID: "uc2", UserID: "u2", CouponID: "c1", Code: "ABC123"}); !errors.Is(err, ErrConflict) {
 		t.Fatalf("expect conflict by code, got %v", err)
 	}
 	got, err := s.GetUserCouponByCode("ABC123")
@@ -131,7 +132,7 @@ func TestUserCouponCRUD(t *testing.T) {
 	if err := s.DeleteUserCoupon("uc1"); err != nil {
 		t.Fatalf("delete: %v", err)
 	}
-	if _, err := s.GetUserCoupon("uc1"); err != ErrNotFound {
+	if _, err := s.GetUserCoupon("uc1"); !errors.Is(err, ErrNotFound) {
 		t.Fatalf("expect not found, got %v", err)
 	}
 }
@@ -149,7 +150,7 @@ func TestUsageCRUD(t *testing.T) {
 	if got.Amount != 500 {
 		t.Fatalf("amount = %d, want 500", got.Amount)
 	}
-	if _, err := s.GetUsage("missing"); err != ErrNotFound {
+	if _, err := s.GetUsage("missing"); !errors.Is(err, ErrNotFound) {
 		t.Fatalf("expect not found, got %v", err)
 	}
 	if n := len(s.ListUsages()); n != 1 {
